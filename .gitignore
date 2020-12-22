@@ -1,0 +1,8 @@
+# Config files
+config.h
+
+# Object files
+*.o
+
+# Binaries
+bar
