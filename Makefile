@@ -1,7 +1,6 @@
 PREFIX = /usr/local
 
-# CFLAGS += -std=c99 -pedantic -Wall -D_POSIX_C_SOURCE=2 #-D_XOPEN_SOURCE=500
-CFLAGS += -pedantic -Wall # -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE=200809L
+CFLAGS += -pedantic -Wall -Wextra
 LDLIBS = -lxcb
 
 MOD =\

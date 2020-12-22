@@ -74,7 +74,7 @@ int main()
         for (unsigned int i = 0; i < LENGTH(blocks); i++)
         {
             if (blocks[i].poll != NULL)
-                blocks[i].poll(&blocks[i], &blocks[i].argument, block_outputs[i]);
+                blocks[i].poll(&blocks[i].argument, block_outputs[i]);
 
             unsigned int interval = blocks[i].interval;
             if (blocks[i].render != NULL && (time == 0 || (interval != 0 && time % interval == 0)))

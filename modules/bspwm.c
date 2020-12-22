@@ -219,7 +219,7 @@ void render_bspwm(const Argument *argument, char *output, char *input)
     snprintf(output, BLOCK_OUTPUT_LENGTH, "%s", buf);
 }
 
-void poll_bspwm(const Block *block, const Argument *argument, char *output)
+void poll_bspwm(const Argument *argument, char *output)
 {
     struct pollfd bspwm_fds[] = {
         {bspwm_sock_fd, POLLIN, 0},

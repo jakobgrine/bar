@@ -23,10 +23,10 @@ typedef struct {
 
 typedef struct Block {
     unsigned int interval;
-    unsigned int signal;
+    int signal;
     void (*init)();
     void (*render)(const Argument *argument, char *output);
-    void (*poll)(const struct Block *block, const Argument *argument, char *output);
+    void (*poll)(const Argument *argument, char *output);
     void (*deinit)();
     const Argument argument;
 } Block;

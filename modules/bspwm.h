@@ -7,7 +7,7 @@
 
 void init_bspwm();
 void render_bspwm(const Argument *argument, char *output, char *input);
-void poll_bspwm(const Block *block, const Argument *argument, char *output);
+void poll_bspwm(const Argument *argument, char *output);
 void deinit_bspwm();
 
 #endif // __MODULES_BSPWM_H
