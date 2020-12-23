@@ -18,6 +18,10 @@ typedef struct {
         struct {
             bool all_monitors;
         } bspwm;
+        struct {
+            const char *format;
+            char *driver;
+        } backlight;
     };
 } Argument;
 

@@ -6,7 +6,8 @@ LDLIBS = -lxcb
 MOD =\
 	modules/bspwm\
 	modules/command\
-	modules/text
+	modules/text\
+	modules/backlight
 
 all: bar
 
