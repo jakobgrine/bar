@@ -3,6 +3,6 @@
 
 void render_text(const Argument *argument, char *output)
 {
-    strcpy(output, argument->text.text);
+    strncpy(output, argument->text.text, BLOCK_OUTPUT_LENGTH - 1);
 }
 
