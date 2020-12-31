@@ -4,6 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <signal.h>
+#include <X11/Xlib.h>
 #include "common.h"
 #include "config.h"
 
@@ -16,7 +17,23 @@ char status[STATUS_LENGTH];
 char old_status[STATUS_LENGTH];
 bool done = false;
 
-void print_status()
+Display *dpy;
+int screen;
+Window root;
+
+int setupX()
+{
+    if (!(dpy = XOpenDisplay(NULL)))
+    {
+        fputs("setupX: Failed to open X display\n", stderr);
+        return 0;
+    }
+    screen = DefaultScreen(dpy);
+    root = RootWindow(dpy, screen);
+    return 1;
+}
+
+void write_status()
 {
     // Concatenate the command outputs
     strcpy(old_status, status);
@@ -29,11 +46,19 @@ void print_status()
     }
     status[strlen(status) - DELIMITER_LENGTH] = '\0';
 
-    // Print the status if it changed
+    // Write the status if it changed
     if (strcmp(status, old_status) != 0)
     {
-        puts(status);
-        fflush(stdout);
+        if (mode == MODE_X)
+        {
+            XStoreName(dpy, root, status);
+            XFlush(dpy);
+        }
+        else if (mode == MODE_STDOUT)
+        {
+            puts(status);
+            fflush(stdout);
+        }
     }
 }
 
@@ -42,7 +67,7 @@ void signal_handler(int signal)
     for (unsigned int i = 0; i < LENGTH(blocks); i++)
         if (blocks[i].signal == signal - SIGRTMIN)
             blocks[i].render(&blocks[i].argument, block_outputs[i]);
-    print_status();
+    write_status();
 }
 
 void terminate_handler()
@@ -50,8 +75,28 @@ void terminate_handler()
     done = true;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
+    char opt;
+    while ((opt = getopt(argc, argv, "xo")) != -1 )
+    {
+        switch (opt)
+        {
+            case 'x':
+                mode = MODE_X;
+                break;
+            case 'o':
+                mode = MODE_STDOUT;
+                break;
+            default:
+                fprintf(stderr, "Usage: %s [-xo]\n", argv[0]);
+                return 1;
+        }
+    }
+
+    if (mode == MODE_X && !setupX())
+        return 1;
+
     if (DELIMITER_LENGTH != strlen(delimiter))
         fputs("warning: Delimiter length mismatch\n", stderr);
 
@@ -82,11 +127,14 @@ int main()
         }
         time += INTERVAL;
 
-        // Print the status
-        print_status();
+        // Write the status
+        write_status();
 
         usleep(INTERVAL * 1000);
     }
+
+    if (mode == MODE_X)
+        XCloseDisplay(dpy);
 
     for (unsigned int i = 0; i < LENGTH(blocks); i++)
         if (blocks[i].deinit != NULL)

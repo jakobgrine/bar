@@ -1,7 +1,7 @@
 PREFIX = /usr/local
 
 CFLAGS += -pedantic -Wall -Wextra
-LDLIBS = -lxcb
+LDLIBS = -lxcb -lX11
 
 MOD =\
 	modules/bspwm\

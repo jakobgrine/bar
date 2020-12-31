@@ -5,6 +5,11 @@
 
 #define BLOCK_OUTPUT_LENGTH 8192
 
+typedef enum {
+    MODE_X,
+    MODE_STDOUT,
+} Mode;
+
 typedef struct {
     bool no_delimiter;
     union {
