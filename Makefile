@@ -3,6 +3,10 @@ PREFIX = /usr/local
 CFLAGS += -pedantic -Wall -Wextra
 LDLIBS = -lxcb -lX11
 
+# Uncomment to compile without X11 support
+# CFLAGS += -DNO_X
+# LDLIBS =
+
 MOD =\
 	modules/bspwm\
 	modules/command\

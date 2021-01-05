@@ -7,7 +7,10 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <poll.h>
+
+#ifndef NO_X
 #include <xcb/xcb.h>
+#endif // NO_X
 
 int bspwm_sock_fd;
 bool bspwm_module_active = false;
@@ -24,6 +27,7 @@ unsigned int get_num_monitors()
     char *sp = getenv("BSPWM_SOCKET");
     if (sp != NULL)
         snprintf(sock_address.sun_path, sizeof(sock_address.sun_path), "%s", sp);
+#ifndef NO_X
     else
     {
         char *host = NULL;
@@ -32,6 +36,7 @@ unsigned int get_num_monitors()
             snprintf(sock_address.sun_path, sizeof(sock_address.sun_path), "/tmp/bspwm%s_%i_%i-socket", host, dsp, srn);
         free(host);
     }
+#endif // NO_X
 
     if (connect(sock_fd, (struct sockaddr *) &sock_address, sizeof(sock_address)) == -1)
         fputs("init_bspwm: Failed to connect to the socket\n", stderr);
@@ -85,6 +90,7 @@ void init_bspwm()
     char *sp = getenv("BSPWM_SOCKET");
     if (sp != NULL)
         snprintf(sock_address.sun_path, sizeof(sock_address.sun_path), "%s", sp);
+#ifndef NO_X
     else
     {
         char *host = NULL;
@@ -93,6 +99,7 @@ void init_bspwm()
             snprintf(sock_address.sun_path, sizeof(sock_address.sun_path), "/tmp/bspwm%s_%i_%i-socket", host, dsp, srn);
         free(host);
     }
+#endif // NO_X
 
     if (connect(bspwm_sock_fd, (struct sockaddr *) &sock_address, sizeof(sock_address)) == -1)
         fputs("init_bspwm: Failed to connect to the socket\n", stderr);

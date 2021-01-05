@@ -6,7 +6,9 @@
 #define BLOCK_OUTPUT_LENGTH 8192
 
 typedef enum {
+#ifndef NO_X
     MODE_X,
+#endif // NO_X
     MODE_STDOUT,
 } Mode;
 

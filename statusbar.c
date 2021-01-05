@@ -4,9 +4,13 @@
 #include <string.h>
 #include <unistd.h>
 #include <signal.h>
-#include <X11/Xlib.h>
+
 #include "common.h"
 #include "config.h"
+
+#ifndef NO_X
+#include <X11/Xlib.h>
+#endif // NO_X
 
 #define LENGTH(X) (sizeof(X) / sizeof(X[0]))
 #define STATUS_LENGTH (LENGTH(blocks) * BLOCK_OUTPUT_LENGTH + 1)
@@ -17,6 +21,7 @@ char status[STATUS_LENGTH];
 char old_status[STATUS_LENGTH];
 bool done = false;
 
+#ifndef NO_X
 Display *dpy;
 int screen;
 Window root;
@@ -32,6 +37,7 @@ int setupX()
     root = RootWindow(dpy, screen);
     return 1;
 }
+#endif // NO_X
 
 void write_status()
 {
@@ -49,12 +55,15 @@ void write_status()
     // Write the status if it changed
     if (strcmp(status, old_status) != 0)
     {
+#ifndef NO_X
         if (mode == MODE_X)
         {
             XStoreName(dpy, root, status);
             XFlush(dpy);
         }
-        else if (mode == MODE_STDOUT)
+        else
+#endif // NO_X
+        if (mode == MODE_STDOUT)
         {
             puts(status);
             fflush(stdout);
@@ -82,9 +91,11 @@ int main(int argc, char *argv[])
     {
         switch (opt)
         {
+#ifndef NO_X
             case 'x':
                 mode = MODE_X;
                 break;
+#endif // NO_X
             case 'o':
                 mode = MODE_STDOUT;
                 break;
@@ -94,8 +105,10 @@ int main(int argc, char *argv[])
         }
     }
 
+#ifndef NO_X
     if (mode == MODE_X && !setupX())
         return 1;
+#endif // NO_X
 
     if (DELIMITER_LENGTH != strlen(delimiter))
         fputs("warning: Delimiter length mismatch\n", stderr);
@@ -133,8 +146,10 @@ int main(int argc, char *argv[])
         usleep(INTERVAL * 1000);
     }
 
+#ifndef NO_X
     if (mode == MODE_X)
         XCloseDisplay(dpy);
+#endif // NO_X
 
     for (unsigned int i = 0; i < LENGTH(blocks); i++)
         if (blocks[i].deinit != NULL)
